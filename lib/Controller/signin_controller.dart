@@ -1,5 +1,5 @@
-import 'dart:convert';
-import 'dart:developer';
+import 'dart:convert';  /// แปลงข้อมูลระหว่างรูปแบบ JSON และ Object ของ 
+import 'dart:developer'; /// log 
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/Model/signin_model.dart';
 import 'package:flutter_application_1/View/detail.dart';
@@ -8,9 +8,9 @@ import 'package:http/http.dart' as http;
 
 class SigninController {
   final client = http.Client();
-  final baseUrl = "http:/192.168.25.214:6004/api";
+  final baseUrl = "http://localhost:6004/api";
   final token = "950b88051dc87fe3fcb0b4df25eee676";
-  late Signin user; //class model ของ sign in
+  late Signin user; //class model ของ sign in ประกาศใช้ late เพื่อกำหนดค่าภายหลัง (เมื่อมีการเข้าสู่ระบบสำเร็จแล้ว ข้อมูลผู้ใช้จะถูกเก็บไว้ในตัวแปร) 
 
   //set headers
   dynamic getHeaders() {
@@ -21,7 +21,7 @@ class SigninController {
 
     return header;
   }
-
+     // แสดงข้อความเตือนผิดพลาด
   void showSnackBar(String text, var context) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -31,53 +31,57 @@ class SigninController {
     );
   }
 
+  void showSnackBar2(String text, var context) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+          duration: Duration(seconds: 1),
+          backgroundColor: const Color.fromARGB(255, 194, 67, 58),
+          content: Text(text, style: TextStyle(color: Colors.white))),
+    );
+  }
+
   void signinUser(TextEditingController email, TextEditingController pass,
       var context) async {
-    String mail = email.text;
-    String passw = pass.text;
-
     final json = {
+       /// สร้าง JSON object ที่มี key-value pairs 
       "user_email": email.text,
       "user_password": pass.text,
     };
     log(json.toString());
 
-    final url = Uri.parse('http://192.168.25.214:6004/api/login');
-    // final url = Uri.parse('http://localhost:6004/api/login');
+    ///เพื่อแปลง URL string ให้กลายเป็น URI object ซึ่งสามารถใช้ในการสร้าง HTTP request ได้ 
+    final url = Uri.parse('http://localhost:6004/api/login');
 
     final res =
         await client.post(url, body: jsonEncode(json), headers: getHeaders());
     log(res.body);
-    var data = jsonDecode(res.body); //แปลงข้อมูล json
+    var data = jsonDecode(res.body); //แปลงข้อมูล JSON จาก body ของ response เป็น Object ของ Dart
     print(data);
 
     log(res.statusCode.toString());
 
+    /// ตรวจสอบสถานะการตอบกลับจากเซิร์ฟเวอร์ API
     if (res.statusCode == 200) {
       user = Signin.fromJson(data);
       showSnackBar('SIGN IN SUCCESS!!', context);
-      SharedPreferences pref = await SharedPreferences.getInstance();
-      pref.setString('email', mail);
-      pref.setString('pass', passw);
+      SharedPreferences pref = await SharedPreferences.getInstance();  //SharedPreferences เพื่อให้สามารถใช้งานได้ในครั้งถัดไปโดยไม่ต้องเข้าสู่ระบบใหม่
+      pref.setString('email', email.text);
+      pref.setString('pass', pass.text);
+      /// ถ้าล็อกอินสำเร็จ ให้push ไปหน้า class detail (userdtและuseidที่ถูกส่งไปยังหน้าdetail)
       Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => detail(
-            userdt: "${user.userFname} ${user.userLname}",
-            useid: user.userId,
-            // dataList: Map(),
+            userdt: "${user.userFname} ${user.userLname}", 
+            userID: user.userId,
           ),
         ),
+       
       );
     } else if (res.statusCode == 400) {
-      showSnackBar('Email or password is incorrect', context);
+      showSnackBar2('Email or password is incorrect', context);
     } else {
-      showSnackBar('Database Error!', context);
+      showSnackBar2('Database Error!', context);
     }
-  }
-
-  void clearLogin(TextEditingController email, TextEditingController pass) {
-    email.clear();
-    pass.clear();
   }
 }

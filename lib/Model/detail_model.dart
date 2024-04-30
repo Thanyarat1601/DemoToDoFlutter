@@ -1,8 +1,9 @@
 import 'dart:convert';
-// import 'dart:ffi';
 
+/// สำหรับแปลงข้อมูล JSON ให้เป็นอ็อบเจกต์ของ Detail
 Detail detailFromJson(String str) => Detail.fromJson(json.decode(str));
 
+// สำหรับแปลงอ็อบเจกต์ Detail เป็นข้อมูล JSON
 String detailToJson(Detail data) => json.encode(data.toJson());
 
 class Detail {
@@ -12,8 +13,7 @@ class Detail {
   String userTodoListCompleted;
   DateTime userTodoListLastUpdate;
   int userId;
-  dynamic userTodoTypeId;
-  dynamic userTodoTypeName;
+
 
   Detail({
     required this.userTodoListId,
@@ -22,10 +22,10 @@ class Detail {
     required this.userTodoListCompleted,
     required this.userTodoListLastUpdate,
     required this.userId,
-    required this.userTodoTypeId,
-    required this.userTodoTypeName,
+
   });
 
+  /// สร้างอ็อบเจกต์ Detail จากข้อมูล JSON
   factory Detail.fromJson(Map<String, dynamic> json) => Detail(
         userTodoListId: json["user_todo_list_id"],
         userTodoListTitle: json["user_todo_list_title"],
@@ -33,11 +33,9 @@ class Detail {
         userTodoListCompleted: json["user_todo_list_completed"],
         userTodoListLastUpdate:
             DateTime.parse(json["user_todo_list_last_update"]),
-        userId: json["user_id"],
-        userTodoTypeId: json["user_todo_type_id"],
-        userTodoTypeName: json["user_todo_type_name"],
+        userId: json["user_id"]
       );
-
+/// แปลงอ็อบเจกต์ Detail เป็น Map ที่มี key เป็นสตริงและ value 
   Map<String, dynamic> toJson() => {
         "user_todo_list_id": userTodoListId,
         "user_todo_list_title": userTodoListTitle,
@@ -45,7 +43,6 @@ class Detail {
         "user_todo_list_completed": userTodoListCompleted,
         "user_todo_list_last_update": userTodoListLastUpdate.toIso8601String(),
         "user_id": userId,
-        "user_todo_type_id": userTodoTypeId,
-        "user_todo_type_name": userTodoTypeName,
+   
       };
 }

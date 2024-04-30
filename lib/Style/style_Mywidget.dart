@@ -1,29 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:buttons_flutter/buttons_flutter.dart';
 import 'package:flutter/widgets.dart';
-import 'package:form_field_validator/form_field_validator.dart' as ff_validator;
+import 'package:form_field_validator/form_field_validator.dart';
+import 'package:control_style/control_style.dart';
 
-class Stylrlogin extends StatelessWidget {
+class Stylreogin extends StatelessWidget {
   final String label;
   final TextEditingController controller;
-  final ff_validator.FormFieldValidator<String>? validator;
   final _formKey = GlobalKey<FormState>();
   bool Texthint;
 
-  Stylrlogin(
+  Stylreogin(
     this.label,
-    this.Texthint, {
+    this.Texthint,
+    {
     required this.controller,
-    this.validator,
+
+  
   });
+  late String labelText;
 
   @override
   Widget build(BuildContext context) {
-    return Form(
-      key: _formKey,
+    return GestureDetector(
+      onTap: (){
+        FocusManager.instance.primaryFocus?.unfocus();
+      },
       child: Container(
         width: MediaQuery.of(context).size.width * 0.8,
-        // padding: EdgeInsets.fromLTRB(30, 10, 30, 10),
         child: TextFormField(
           autovalidateMode: AutovalidateMode.onUserInteraction,
           obscureText: Texthint,
@@ -40,10 +44,15 @@ class Stylrlogin extends StatelessWidget {
             filled: true, // กำหนดให้มีการเติมสีพื้นหลัง
             fillColor: Color(0xFFF3F3F3), // กำหนดสีพื้นหลัง
           ),
-          validator: validator, // ใช้งาน validator ที่รับเข้ามา
+          validator: label == 'Email'
+              ? MultiValidator([
+                  RequiredValidator(errorText: "Email is required"),
+                  EmailValidator(errorText: "Enter a valid email address")
+                ])
+              : RequiredValidator(errorText: "Please Enter $label"),
           style: TextStyle(
             fontSize: 16,
-            color: Color.fromARGB(255, 140, 139, 138),
+            color: Colors.black,
           ),
         ),
       ),
@@ -106,35 +115,38 @@ class button extends StatelessWidget {
 class StyleMyBottomSheet extends StatelessWidget {
   final String text;
   final IconData iconData;
-  final double sizeBox;
+  // final double sizeBox;
   final VoidCallback? onTap;
 
-  const StyleMyBottomSheet(this.text, this.iconData, this.sizeBox,
+  const StyleMyBottomSheet(this.text, this.iconData,
+  //  this.sizeBox,
       {this.onTap});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       height: 75,
-      child: GestureDetector(
+      child: InkWell(
         onTap: onTap,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Icon(
-              iconData,
-              color: Color(0xFF0D7A5C),
-              size: 20,
-            ),
-            Text(
+            Row(
+              children: [
+                Icon(
+                  iconData,
+                  color: Color(0xFF0D7A5C),
+                  size: 20,
+                ),
+                SizedBox(width: 5,),
+                 Text(
               text,
               style: TextStyle(
                 fontSize: 16,
                 color: Color(0xFF0D7A5C),
               ),
             ),
-            SizedBox(
-              width: sizeBox,
+              ],
             ),
             Icon(
               Icons.arrow_forward_ios,
@@ -142,6 +154,90 @@ class StyleMyBottomSheet extends StatelessWidget {
               size: 25,
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class TitleTextwidget extends StatelessWidget {
+  final TextEditingController Controller;
+  TitleTextwidget({super.key, required this.Controller});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: TextFormField(
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        controller: Controller,
+        decoration: InputDecoration(
+          border: DecoratedInputBorder(
+            child: OutlineInputBorder(
+            borderSide: BorderSide.none,
+            borderRadius: BorderRadius.circular(15),
+            ),
+           
+          shadow:  [
+          BoxShadow(
+           color: Colors.grey.withOpacity(0.5), // สีเงา
+             spreadRadius: 0, // รัศมีการกระจาย
+             blurRadius: 8, // ความเบลอ
+             offset: Offset(0, 2), // การเยื้อง
+           ),
+       ],
+          ),
+          hintText: ('Title'),
+          filled: true,
+          fillColor: Colors.white,
+        ),
+        validator: RequiredValidator(errorText: 'Please enter Title'),
+        style: TextStyle(
+          fontSize: 16,
+          color: Color.fromARGB(255, 140, 139, 138),
+        ),
+      ),
+    );
+  }
+}
+
+class DescriptionTextwidget extends StatelessWidget {
+  final TextEditingController Controller;
+  const DescriptionTextwidget({super.key, required this.Controller});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: TextFormField(
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        controller: Controller,
+        maxLines: 5,
+              decoration: InputDecoration(
+          border: DecoratedInputBorder(
+            child: OutlineInputBorder(
+            borderSide: BorderSide.none,
+            borderRadius: BorderRadius.circular(15),
+            ),
+          shadow:  [
+          BoxShadow(
+           color: Colors.grey.withOpacity(0.5), // สีเงา
+             spreadRadius: 0, // รัศมีการกระจาย
+             blurRadius: 8, // ความเบลอ
+             offset: Offset(0, 2), // การเยื้อง
+           ),
+       ],
+          ),
+          hintText: ('Description'),
+          filled: true,
+          fillColor: Colors.white,
+        ),
+        validator: MultiValidator([
+          MaxLengthValidator(250, 
+          errorText: 'Message must not exceed 250 characters.'),
+          RequiredValidator(errorText: 'Please enter Description '),
+        ]),
+        style: TextStyle(
+          fontSize: 16,
+          color: Color.fromARGB(255, 140, 139, 138),
         ),
       ),
     );

@@ -1,17 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/Controller/signin_controller.dart';
-// import 'package:flutter_application_1/Model/signin_model.dart';
 import 'package:flutter_application_1/Style/style_Mywidget.dart';
-// import 'package:flutter_application_1/View/detail.dart';
 import 'package:flutter_application_1/View/signup.dart';
-// import 'package:flutter_application_1/View/signin.dart';
-import 'package:flutter_application_1/main.dart';
-// import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/services.dart';
-import 'package:form_field_validator/form_field_validator.dart';
-import 'package:passwordfield/passwordfield.dart';
-
-// import 'package:flutter_svg/flutter_svg.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -22,96 +13,98 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final SigninController signinController = SigninController();
-  final GlobalKey<FormState> _formKey =
-      GlobalKey<FormState>(); // สร้าง GlobalKey<FormState>
+
+  final _formKey =  GlobalKey<FormState>(); /// เชื่อมโยงระหว่างฟอร์มและสถานะของฟอร์ม เพื่อเป็นการตรวจสอบความถูกต้องที่ผู้ใช้กรอก
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(), // สร้าง AppBar
-      body: SingleChildScrollView(
+      body: GestureDetector(
+        onTap: (){
+          FocusManager.instance.primaryFocus?.unfocus();
+        },
         child: Container(
-          decoration: BoxDecoration(
+          width: double.infinity,
+          decoration: const BoxDecoration(
             // ตกแต่งพื้นหลัง ใส่ background
             image: DecorationImage(
+            fit: BoxFit.cover, 
               image: AssetImage("assets/background.png"),
-              fit: BoxFit.fill,
             ),
           ),
-          child: Center(
-            child: Column(
-              mainAxisAlignment:
-                  MainAxisAlignment.start, // กำหนดwidget ให้อยู่ตรงไหนในหน้า
-
-              children: <Widget>[
-                SizedBox(
-                  height: 59,
-                ),
-                Text(
-                  'SIGN IN',
-                  style: TextStyle(
-                    fontFamily: 'OpenSans',
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Text('Please enter the information'),
-                Text('below to access.'),
-                SizedBox(height: 35),
-                Image(
-                  image: AssetImage("assets/iconSigin.png"),
-                  width: 98,
-                  height: 98,
-                ),
-                SizedBox(height: 34),
-                Stylrlogin(
-                  "Email",
-                  false,
-                  controller: emailController,
-                  validator: MultiValidator([
-                    RequiredValidator(errorText: "Email is required"),
-                    EmailValidator(errorText: "Enter a valid email address")
-                  ]),
-                ),
-                SizedBox(height: 20),
-                Stylrlogin(
-                  "Password",
-                  true,
-                  controller: passwordController,
-                  validator:
-                      RequiredValidator(errorText: "Password is required"),
-                ),
-                SizedBox(height: 20),
-                Container(
-                  padding: EdgeInsets.fromLTRB(10, 10, 45, 40),
-                  alignment: Alignment.bottomRight,
-                  child: Text(
-                    'Forgot Password ?',
-                    style: TextStyle(fontSize: 15),
-                  ),
-                ),
-                button("SIGN IN", onPressed: () {
-                  // bool isValid = _formKey.currentState!.validate();
-                  // if (isValid) {
-                  signinController.signinUser(
-                    emailController,
-                    passwordController,
-                    context,
-                  );
-                }
-                    // },
+            child: Form(
+              key: _formKey,
+              child: ListView(
+               children: [Column(
+        
+                  children: [
+                    SizedBox(
+                      height: 59,
                     ),
-                SizedBox(height: 19),
-                button(
-                  "SIGN UP",
-                  onPressed: () => {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => Signup()))
-                  },
-                ),
-              ],
+                    Text(
+                      'SIGN IN',
+                      style: TextStyle(
+                        fontFamily: 'OpenSans',
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text('Please enter the information'),
+                    Text('below to access.'),
+                    SizedBox(height: 35),
+                    Image(
+                      image: AssetImage("assets/iconSigin.png"),
+                      width: 98,
+                      height: 98,
+                    ),
+                    SizedBox(height: 34),
+                    Stylreogin(
+                      "Email",
+                      false,
+                      controller: emailController,
+                   
+                    ),
+                    SizedBox(height: 20),
+                    Stylreogin(
+                      "Password",
+                      true,
+                      controller: passwordController,
+                  
+                    ),
+                    SizedBox(height: 20),
+                    Container(
+                      padding: EdgeInsets.fromLTRB(10, 10, 45, 40),
+                      alignment: Alignment.bottomRight,
+                      child: Text(
+                        'Forgot Password ?',
+                        style: TextStyle(fontSize: 15),
+                      ),
+                    ),
+                    button("SIGN IN", onPressed: () {
+                     if (_formKey.currentState!.validate()) {
+                      signinController.signinUser(
+                        emailController,
+                        passwordController,
+                        context,
+                      );
+                     }
+                    }
+                        // },
+                        ),
+                    SizedBox(height: 19),
+                    button(
+                      "SIGN UP",
+                      onPressed: () => {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) => Signup()))
+                      },
+                    ),
+                  ],
+                ),],
+              ),
             ),
-          ),
+          // ),
+        
         ),
       ),
     );

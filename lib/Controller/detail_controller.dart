@@ -2,15 +2,11 @@ import 'dart:convert';
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/Model/detail_model.dart';
-// import 'package:flutter_application_1/Model/signin_model.dart';
-// import 'package:flutter_application_1/View/addyourtodo.dart';
-// import 'package:flutter_application_1/View/detail.dart';
-// import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
 class DetailTodoController {
   final client = http.Client();
-  final baseUrl = "http:/192.168.25.214:6004/api";
+  final baseUrl = "http:/localhost:6004/api";
   final token = "950b88051dc87fe3fcb0b4df25eee676";
   late Detail detailtodo; //class model ของ datail
 
@@ -29,10 +25,10 @@ class DetailTodoController {
     );
   }
 
-  Future<List<Detail>> getdataTodo() async {
+  Future<List<Detail>> getdataTodo(
+  ) async {
     detailtodolist.clear();
-    final url = Uri.parse('http://192.168.25.214:6004/api/todo_list/$userId');
-    // final url = Uri.parse('http://localhost:6004/api/todo_list/$userId');
+    final url = Uri.parse('http://localhost:6004/api/todo_list/$userId');
 
     final res = await http.get(url, headers: {
       'Authorization': 'Bearer $token',
@@ -44,6 +40,8 @@ class DetailTodoController {
       detailtodolist.add(Detail.fromJson(i));
       // log('data${detailtodolist}');
     }
+    // เรียงลำดับข้อมูลโดยใช้เวลาที่ทำการสร้างข้อมูล (userTodoListLastUpdate) ให้สิ่งที่สร้างเร็วที่สุดอยู่ข้างบน
+  detailtodolist.sort((a, b) => b.userTodoListLastUpdate.compareTo(a.userTodoListLastUpdate));
     return detailtodolist;
   }
 }
